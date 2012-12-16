@@ -70,9 +70,7 @@ public class Method {
     final Set<Integer> expectedStatuses;
     {
       expectedStatuses = new HashSet<Integer>();
-      expectedStatuses.add(200);
-      expectedStatuses.add(201);
-      expectedStatuses.add(204);
+      expect(200, 201, 204);
     };
     boolean anyStatus;
 
@@ -166,6 +164,14 @@ public class Method {
             this.expectedStatuses.clear();
             for( int status : statuses ) {
                 this.expectedStatuses.add(status);
+                /**
+                 * IE8/9 will say that the status of the call is 1223 instead of 204, even if the server does
+                 * in fact says 204.
+                 * http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+                 */
+                if (status == 204) {
+                    this.expectedStatuses.add(1223); // IE8/9 Bug, for status 204.
+                }
             }
         }
         return this;
